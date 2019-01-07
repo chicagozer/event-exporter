@@ -32,7 +32,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
-	"event-exporter/sinks"
+	"github.com/chicagozer/event-exporter/sinks"
 )
 
 const (
