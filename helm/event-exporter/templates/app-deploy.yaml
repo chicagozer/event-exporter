@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    run: event-exporter
+  name: event-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: event-exporter
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "80"
+        prometheus.io/scrape: "true"
+      labels:
+        run: event-exporter
+    spec:
+      containers:
+      - args:
+        - -v
+        - "4"
+        - -elasticsearch-server
+        - {{ .Values.app.esURL }}
+        command:
+        - /event-exporter
+        image: chicagozer/event-exporter
+        imagePullPolicy: Always
+        name: event-exporter
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+{{ if .Values.app.rbacAccount }}
+      serviceAccount:  {{ .Values.app.rbacAccount }}
+      serviceAccountName: {{  .Values.app.rbacAccount }} 
+{{ end }}

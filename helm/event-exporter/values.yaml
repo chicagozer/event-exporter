@@ -1,0 +1,3 @@
+app:
+  esURL: http://esproxy.default:80/
+  replicas: 1
